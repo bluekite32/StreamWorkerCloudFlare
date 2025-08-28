@@ -12,6 +12,14 @@ export default {
     }
     
     // For all other requests, serve from Cloudflare Pages
-    return fetch(request);
+    // You'll need to replace this with your actual Pages URL
+    const pagesUrl = new URL(request.url);
+    pagesUrl.hostname = 'welcome-audio-stream.pages.dev'; // Replace with your actual Pages domain
+    
+    return fetch(pagesUrl, {
+      method: request.method,
+      headers: request.headers,
+      body: request.body,
+    });
   },
 };
