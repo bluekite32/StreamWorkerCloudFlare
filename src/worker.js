@@ -23,14 +23,14 @@ export default {
       });
     }
     
-    // For the main page and all other requests, serve your Cloudflare Pages site
-    const pagesUrl = new URL(request.url);
-    pagesUrl.hostname = 'YOUR_PAGES_URL.pages.dev'; // Replace with your actual Pages URL
+    // For the main page, serve your HTML
+    const html = YOUR_HTML_CONTENT_HERE;
     
-    return fetch(pagesUrl, {
-      method: request.method,
-      headers: request.headers,
-      body: request.body,
+    return new Response(html, {
+      headers: { 
+        'content-type': 'text/html',
+        'Access-Control-Allow-Origin': '*'
+      },
     });
   },
 };
