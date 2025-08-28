@@ -2,11 +2,10 @@ export default {
   async fetch(request) {
     const url = new URL(request.url);
     
-    // If requesting /stream.mp3, proxy the stream through HTTPS
+    // If requesting /stream.mp3, proxy the audio stream
     if (url.pathname === '/stream.mp3') {
       const streamUrl = 'http://161.33.231.94:8000/stream.mp3';
       
-      // Fetch the stream from your server
       const response = await fetch(streamUrl, {
         method: request.method,
         headers: {
@@ -14,7 +13,6 @@ export default {
         },
       });
       
-      // Return the stream with proper headers for audio
       return new Response(response.body, {
         status: response.status,
         headers: {
@@ -25,9 +23,14 @@ export default {
       });
     }
     
-    // For all other requests, serve your main website
-    return new Response('Welcome to welcome.audio', {
-      headers: { 'content-type': 'text/html' },
+    // For the main page and all other requests, serve your Cloudflare Pages site
+    const pagesUrl = new URL(request.url);
+    pagesUrl.hostname = 'YOUR_PAGES_URL.pages.dev'; // Replace with your actual Pages URL
+    
+    return fetch(pagesUrl, {
+      method: request.method,
+      headers: request.headers,
+      body: request.body,
     });
   },
 };
