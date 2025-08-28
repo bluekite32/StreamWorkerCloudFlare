@@ -1,4 +1,4 @@
-name = "welcome-audio-stream"
+name = "welcome-audio-stream2"
 main = "src/worker.js"
 compatibility_date = "2025-08-28"
 [env.production]
