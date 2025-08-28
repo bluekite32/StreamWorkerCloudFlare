@@ -2,35 +2,44 @@ export default {
   async fetch(request) {
     const url = new URL(request.url);
     
-    // If requesting /stream.mp3, proxy the audio stream
+    // Debug logging
+    console.log('Request URL:', request.url);
+    console.log('Pathname:', url.pathname);
+    
+    // Handle stream request
     if (url.pathname === '/stream.mp3') {
-      const streamUrl = 'http://161.33.231.94:8000/stream.mp3';
+      console.log('Serving audio stream');
       
-      const response = await fetch(streamUrl, {
-        method: request.method,
-        headers: {
-          'User-Agent': request.headers.get('User-Agent') || 'CloudflareWorker',
-        },
-      });
-      
-      return new Response(response.body, {
-        status: response.status,
-        headers: {
-          'Content-Type': 'audio/mpeg',
-          'Access-Control-Allow-Origin': '*',
-          'Cache-Control': 'no-cache',
-        },
-      });
+      try {
+        const response = await fetch('http://161.33.231.94:8000/stream.mp3', {
+          method: request.method,
+          headers: {
+            'User-Agent': 'CloudflareWorker',
+          },
+        });
+        
+        return new Response(response.body, {
+          status: response.status,
+          headers: {
+            'Content-Type': 'audio/mpeg',
+            'Access-Control-Allow-Origin': '*',
+            'Cache-Control': 'no-cache',
+          },
+        });
+      } catch (error) {
+        return new Response('Stream error', { status: 500 });
+      }
     }
     
-    // For the main page, serve your HTML
-    const html = YOUR_HTML_CONTENT_HERE;
+    // Serve HTML for all other requests
+    const html = `<!DOCTYPE html>
+<html>
+<head><title>Welcome Audio</title></head>
+<body><h1>Main page - worker is working</h1></body>
+</html>`;
     
     return new Response(html, {
-      headers: { 
-        'content-type': 'text/html',
-        'Access-Control-Allow-Origin': '*'
-      },
+      headers: { 'content-type': 'text/html' },
     });
   },
 };
